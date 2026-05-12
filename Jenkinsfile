@@ -1,37 +1,42 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven'
-    }
-
     stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'master',
+                url: 'https://github.com/harmain27-04/MyMavenSeleniumFirefoxApp.git'
+            }
+        }
 
         stage('Build') {
             steps {
-                sh 'mvn clean package'
+                sh 'chmod +x gradlew'
+                sh './gradlew clean build'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'mvn test'
+                sh './gradlew test'
             }
         }
 
-        stage('Run Application') {
+        stage('Run Firefox Selenium Application') {
             steps {
-                sh 'mvn exec:java -Dexec.mainClass="com.example.App"'
+                sh './gradlew run'
             }
         }
     }
 
     post {
         success {
-            echo 'Build and deployment successful!'
+            echo 'Firefox Selenium Build Successful!'
         }
+
         failure {
-            echo 'Build failed!'
+            echo 'Firefox Selenium Build Failed!'
         }
     }
 }
